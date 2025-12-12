@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourcePrefix": { "value": "zava" },
+    "location": { "value": "westus3" },
+    "environment": { "value": "dev" },
+    "acrSku": { "value": "Basic" },
+    "appServicePlanSku": { "value": "B1" }
+  }
+}

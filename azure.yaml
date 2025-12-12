@@ -1,0 +1,4 @@
+name: zavastorefront
+infra:
+  path: infra
+  parameters: infra/main.parameters.json

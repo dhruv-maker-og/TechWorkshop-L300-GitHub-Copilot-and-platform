@@ -1,0 +1,49 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'src/**' ]
+  pull_request:
+    branches: [ '*' ]
+  workflow_dispatch:
+
+
+env:
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME }}
+  AZURE_CONTAINER_REGISTRY: ${{ vars.AZURE_CONTAINER_REGISTRY }}
+  AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+  CONTAINER_IMAGE: zavastorefront
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and push to ACR
+      run: |
+        az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} \
+          --image ${{ env.CONTAINER_IMAGE }}:${{ github.sha }} \
+          --image ${{ env.CONTAINER_IMAGE }}:latest \
+          --file Dockerfile .
+
+    - name: Deploy to App Service
+      run: |
+        az webapp config container set \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --docker-custom-image-name ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_IMAGE }}:${{ github.sha }}
+
+    - name: Restart App Service
+      run: |
+        az webapp restart \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
