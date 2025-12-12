@@ -28,12 +28,21 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Debug - List files
+      run: |
+        echo "Current directory: $(pwd)"
+        echo "Files in current directory:"
+        ls -la
+        echo "Looking for Dockerfile:"
+        find . -name "Dockerfile" -o -name "dockerfile" 2>/dev/null || echo "No Dockerfile found"
+
     - name: Build and push to ACR
       run: |
         az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} \
           --image ${{ env.CONTAINER_IMAGE }}:${{ github.sha }} \
           --image ${{ env.CONTAINER_IMAGE }}:latest \
-          --file Dockerfile .
+          --file Dockerfile \
+          .
 
     - name: Deploy to App Service
       run: |
