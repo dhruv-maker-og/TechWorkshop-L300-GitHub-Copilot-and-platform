@@ -33,7 +33,8 @@ jobs:
         az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} \
           --image ${{ env.CONTAINER_IMAGE }}:${{ github.sha }} \
           --image ${{ env.CONTAINER_IMAGE }}:latest \
-          --file Dockerfile .
+          --file ./Dockerfile \
+          .
 
     - name: Deploy to App Service
       run: |
