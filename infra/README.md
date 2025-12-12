@@ -121,7 +121,7 @@ infra/
 └── workflows/
     └── deploy.yml           # CI/CD automation
 
-src/                         # .NET 6 application source
+src/                         # .NET 8 application source
 Dockerfile                   # Container definition  
 .dockerignore               # Build optimization
 azure.yaml                  # Azure Developer CLI config
